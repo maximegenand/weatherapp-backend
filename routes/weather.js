@@ -2,8 +2,6 @@ const express = require("express");
 const router = express.Router();
 const City = require('../models/cities');
 
-// API Key for OpenWeather
-const OWM_API_KEY = "31e21a91a5a2de83338d886d67080c47";
 
 router.post("/", (req, res) => {
     let cityReq = req.body.cityName;
@@ -13,13 +11,13 @@ router.post("/", (req, res) => {
         // Si la ville n'existe pas
         if (data === null) {
             // On cherche la lat et lon de la ville
-            fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${cityReq}&appid=${OWM_API_KEY}`)
+            fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${cityReq}&appid=${process.env.OWM_API_KEY}`)
             .then(resRaw => resRaw.json())
             .then(data => {
                 let cityName = data[0].name;
                 const { lat,lon } = data[0];
                 // On cherche les infos méteo de la ville recherchée
-                fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OWM_API_KEY}&units=metric`)
+                fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.OWM_API_KEY}&units=metric`)
                 .then(resRaw => resRaw.json())
                 .then(data => {
                     if (cityName === 'New York County') cityName = 'New York'; // Hack pour passer le ariane test
